@@ -10,15 +10,22 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.pd5gx.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ghkwm.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 async function run() {
     try {
         // Connecting code with mongobd 
         await client.connect();
-        console.log("CONNECTED")
+        const database = client.db('EGovernance');
+        const usersCollection = database.collection('usersInfo');
 
+        //add user
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            const result = await usersCollection.insertOne(user);
+            res.json(result);
+        });
     }
     finally {
         // await client.close()
