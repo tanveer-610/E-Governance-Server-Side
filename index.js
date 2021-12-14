@@ -19,11 +19,65 @@ async function run() {
         await client.connect();
         const database = client.db('EGovernance');
         const usersCollection = database.collection('usersInfo');
+        const bCPCollection = database.collection('birthApplication');
+
+        //find user by email
+        app.get('/users/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email }
+            const user = await (usersCollection.findOne(query));
+            res.json(user);
+        })
 
         //add user
         app.post('/users', async (req, res) => {
             const user = req.body;
             const result = await usersCollection.insertOne(user);
+            res.json(result);
+        });
+        //UPDATE user
+        app.put('/user/:email', async (req, res) => {
+
+            const userEmail = req.params.email;
+            const updatedUserInfo = req.body;
+            const filter = { email: `${userEmail}` };
+            const options = { upsert: true };
+
+            const updateDoc = {
+                $set: {
+                    citizenFullName: updatedUserInfo.citizenFullName,
+                    DOB: updatedUserInfo.DOB,
+                    citizenGender: updatedUserInfo.citizenGender,
+                    citizenReligion: updatedUserInfo.citizenReligion,
+                    citizenMaritalStatus: updatedUserInfo.citizenMaritalStatus,
+                    citizenContactNumber: updatedUserInfo.citizenContactNumber,
+                    permanentDistrictName: updatedUserInfo.permanentDistrictName,
+                    permanentPoliceStation: updatedUserInfo.permanentPoliceStation,
+                    permanentPostOffice: updatedUserInfo.permanentPostOffice,
+                    permanentPostalCode: updatedUserInfo.permanentPostalCode,
+                    permanentUPName: updatedUserInfo.permanentUPName,
+                    permanentCVH: updatedUserInfo.permanentCVH,
+                    presentDistrictName: updatedUserInfo.presentDistrictName,
+                    presentPoliceStation: updatedUserInfo.presentPoliceStation,
+                    presentPostOffice: updatedUserInfo.presentPostOffice,
+                    presentPostalCode: updatedUserInfo.presentPostalCode,
+                    presentUPName: updatedUserInfo.presentUPName,
+                    presentCVH: updatedUserInfo.presentCVH,
+                    citizenFatherName: updatedUserInfo.citizenFatherName,
+                    citizenFatherNID: updatedUserInfo.citizenFatherNID,
+                    citizenMotherName: updatedUserInfo.citizenMotherName,
+                    citizenMotherNID: updatedUserInfo.citizenMotherNID
+                }
+            };
+            const result = await usersCollection.updateOne(filter, updateDoc, options)
+
+            res.send(result);
+        })
+
+        //Add Birth Certificate Applications
+        app.post('/birthApplications', async (req, res) => {
+            const newApplication = req.body;
+            const result = await bCPCollection.insertOne(newApplication);
             res.json(result);
         });
     }
