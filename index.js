@@ -21,6 +21,7 @@ async function run() {
         const usersCollection = database.collection('usersInfo');
         const bCPCollection = database.collection('birthApplication');
         const NIDCollection = database.collection('nidApplication');
+        const passportCollection = database.collection('passportApplication');
 
         //find user by email
         app.get('/users/:email', async (req, res) => {
@@ -86,6 +87,12 @@ async function run() {
         app.post('/nidApplications', async (req, res) => {
             const newApplication = req.body;
             const result = await NIDCollection.insertOne(newApplication);
+            res.json(result);
+        });
+        //Add NID Application
+        app.post('/passportApplications', async (req, res) => {
+            const newApplication = req.body;
+            const result = await passportCollection.insertOne(newApplication);
             res.json(result);
         });
     }
