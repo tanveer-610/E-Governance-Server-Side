@@ -27,7 +27,7 @@ async function run() {
             const user = await (usersCollection.findOne(query));
             res.json(user);
         })
-        //find user Birth certificate application by email
+        //find all aplication
         app.get('/applications', async (req, res) => {
             const cursor = await (applicationCollection.find({}));
             const user = await cursor.toArray();
