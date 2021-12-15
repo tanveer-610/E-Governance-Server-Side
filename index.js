@@ -98,6 +98,15 @@ async function run() {
             const result = await applicationCollection.insertOne(newApplication);
             res.json(result);
         });
+
+        //DELETE application
+        app.delete('/applicationDelete/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log("Id= " + id)
+            const query = { _id: `ObjectId(${id})` };
+            const result = await applicationCollection.deleteOne(query);
+            res.json(result);
+        });
     }
     finally {
         // await client.close()
