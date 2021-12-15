@@ -19,16 +19,19 @@ async function run() {
         await client.connect();
         const database = client.db('EGovernance');
         const usersCollection = database.collection('usersInfo');
-        const bCPCollection = database.collection('birthApplication');
-        const NIDCollection = database.collection('nidApplication');
-        const passportCollection = database.collection('passportApplication');
-
+        const applicationCollection = database.collection('applications');
         //find user by email
         app.get('/users/:email', async (req, res) => {
             const userEmail = req.params.email;
             const query = { email: `${userEmail}` }
             const user = await (usersCollection.findOne(query));
             res.json(user);
+        })
+        //find user Birth certificate application by email
+        app.get('/applications', async (req, res) => {
+            const cursor = await (applicationCollection.find({}));
+            const user = await cursor.toArray();
+            res.send(user)
         })
 
         //add user
@@ -79,20 +82,20 @@ async function run() {
         //Add Birth Certificate Applications
         app.post('/birthApplications', async (req, res) => {
             const newApplication = req.body;
-            const result = await bCPCollection.insertOne(newApplication);
+            const result = await applicationCollection.insertOne(newApplication);
             res.json(result);
         });
 
         //Add NID Application
         app.post('/nidApplications', async (req, res) => {
             const newApplication = req.body;
-            const result = await NIDCollection.insertOne(newApplication);
+            const result = await applicationCollection.insertOne(newApplication);
             res.json(result);
         });
         //Add NID Application
         app.post('/passportApplications', async (req, res) => {
             const newApplication = req.body;
-            const result = await passportCollection.insertOne(newApplication);
+            const result = await applicationCollection.insertOne(newApplication);
             res.json(result);
         });
     }
