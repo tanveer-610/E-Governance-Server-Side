@@ -1,6 +1,7 @@
 const express = require('express');
 const { MongoClient } = require('mongodb');
 require('dotenv').config();
+const ObjectId = require('mongodb').ObjectId;
 const cors = require('cors');
 
 const app = express();
@@ -25,6 +26,13 @@ async function run() {
             const userEmail = req.params.email;
             const query = { email: `${userEmail}` }
             const user = await (usersCollection.findOne(query));
+            res.json(user);
+        })
+        //Find applications by id
+        app.get('/applications/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const user = await (applicationCollection.findOne(query));
             res.json(user);
         })
         //find all aplication
@@ -80,20 +88,7 @@ async function run() {
         })
 
         //Add Birth Certificate Applications
-        app.post('/birthApplications', async (req, res) => {
-            const newApplication = req.body;
-            const result = await applicationCollection.insertOne(newApplication);
-            res.json(result);
-        });
-
-        //Add NID Application
-        app.post('/nidApplications', async (req, res) => {
-            const newApplication = req.body;
-            const result = await applicationCollection.insertOne(newApplication);
-            res.json(result);
-        });
-        //Add NID Application
-        app.post('/passportApplications', async (req, res) => {
+        app.post('/allApplications', async (req, res) => {
             const newApplication = req.body;
             const result = await applicationCollection.insertOne(newApplication);
             res.json(result);
@@ -102,8 +97,7 @@ async function run() {
         //DELETE application
         app.delete('/applicationDelete/:id', async (req, res) => {
             const id = req.params.id;
-            console.log("Id= " + id)
-            const query = { _id: `ObjectId(${id})` };
+            const query = { _id: ObjectId(id) };
             const result = await applicationCollection.deleteOne(query);
             res.json(result);
         });
