@@ -24,6 +24,7 @@ async function run() {
         //find user by email
         app.get('/users/:email', async (req, res) => {
             const userEmail = req.params.email;
+            console.log(userEmail)
             const query = { email: `${userEmail}` }
             const user = await (usersCollection.findOne(query));
             res.json(user);
@@ -80,6 +81,23 @@ async function run() {
                     citizenFatherNID: updatedUserInfo.citizenFatherNID,
                     citizenMotherName: updatedUserInfo.citizenMotherName,
                     citizenMotherNID: updatedUserInfo.citizenMotherNID
+                }
+            };
+            const result = await usersCollection.updateOne(filter, updateDoc, options)
+
+            res.send(result);
+        })
+        //UPDATE Admin
+        app.put('/admin/:email', async (req, res) => {
+
+            const userEmail = req.params.email;
+            const updatedUserInfo = req.body;
+            const filter = { email: `${userEmail}` };
+            const options = { upsert: true };
+
+            const updateDoc = {
+                $set: {
+                    role: updatedUserInfo.role
                 }
             };
             const result = await usersCollection.updateOne(filter, updateDoc, options)
