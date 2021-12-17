@@ -24,7 +24,6 @@ async function run() {
         //find user by email
         app.get('/users/:email', async (req, res) => {
             const userEmail = req.params.email;
-            console.log(userEmail)
             const query = { email: `${userEmail}` }
             const user = await (usersCollection.findOne(query));
             res.json(user);
@@ -87,6 +86,30 @@ async function run() {
 
             res.send(result);
         })
+        //Update user info
+        app.put('/updateUser/:email', async (req, res) => {
+
+            const userEmail = req.params.email;
+            const updatedUserInfo = req.body;
+            const filter = { email: `${userEmail}` };
+            const options = { upsert: true };
+
+            const updateDoc = {
+                $set: {
+                    citizenFullName: updatedUserInfo.citizenFullName,
+                    citizenContactNumber: updatedUserInfo.citizenContactNumber,
+                    presentDistrictName: updatedUserInfo.presentDistrictName,
+                    presentPoliceStation: updatedUserInfo.presentPoliceStation,
+                    presentPostOffice: updatedUserInfo.presentPostOffice,
+                    presentPostalCode: updatedUserInfo.presentPostalCode,
+                    presentUPName: updatedUserInfo.presentUPName,
+                    presentCVH: updatedUserInfo.presentCVH,
+                }
+            };
+            const result = await usersCollection.updateOne(filter, updateDoc, options)
+
+            res.send(result);
+        })
         //UPDATE Admin
         app.put('/admin/:email', async (req, res) => {
 
@@ -104,6 +127,23 @@ async function run() {
 
             res.send(result);
         })
+
+        //UPDATE status
+        app.put('/applicationStatus/:id', async (req, res) => {
+            const id = req.params.id
+            const updatedStatusInfo = req.body;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    applicationStatus: updatedStatusInfo.applicationStatus,
+                    approvedDate: updatedStatusInfo.approvedDate
+                }
+            };
+            const result = await applicationCollection.updateOne(filter, updateDoc, options)
+
+            res.send(result);
+        });
 
         //Add Birth Certificate Applications
         app.post('/allApplications', async (req, res) => {
